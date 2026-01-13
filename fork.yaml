@@ -4,4 +4,8 @@ upstream:
 
 base: main
 
-branches: []
+branches:
+  - name: feature/fork-management
+    base: main
+    description: Fork management infrastructure (build script, config, docs)
+    docs: branches/feature/fork-management.md
