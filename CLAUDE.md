@@ -109,3 +109,71 @@ bun --hot ./index.ts
 ```
 
 For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+
+## Fork Management
+
+This is a fork of `letta-ai/letta-code` with a declarative branch composition system.
+
+### Branch Structure
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Mirror of upstream `letta-ai/letta-code:main` |
+| `fork` | Composed working branch (auto-built from feature branches) |
+| `feature/*` | Fork-only feature branches |
+| `bugfix/*` | Fork-only bugfix branches |
+| `pr/*` | Branches for upstream PR contributions |
+
+### Remotes
+
+- `origin` - mweichert/letta-code (this fork)
+- `upstream` - letta-ai/letta-code (upstream repo)
+
+### Configuration
+
+The fork composition is defined in `fork.yaml`:
+
+```yaml
+upstream:
+  remote: upstream
+  branch: main
+
+base: main
+
+branches:
+  - name: feature/example
+    base: main
+    description: Example feature branch
+    docs: branches/feature/example.md
+```
+
+### Rebuilding the Fork
+
+To sync with upstream, rebase all branches, and rebuild fork:
+
+```bash
+uv run scripts/build-fork.py           # Full rebuild
+uv run scripts/build-fork.py --dry-run # Preview changes
+```
+
+This script:
+1. Fetches upstream and resets `main`
+2. Rebases each branch onto its base (topologically sorted)
+3. Merges all branches into `fork`
+4. Pushes everything to origin
+
+### Adding a New Branch
+
+1. Create from main: `git checkout -b feature/my-feature main`
+2. Make changes, commit, push
+3. Create branch documentation in `branches/feature/my-feature.md`
+4. Add entry to `fork.yaml`
+5. Run `uv run scripts/build-fork.py`
+
+### Contributing Upstream
+
+For changes intended for upstream:
+1. Create a `pr/*` branch from `main`
+2. Make changes and push
+3. Create PR via `gh pr create`
+4. Do NOT add to `fork.yaml` (these should go upstream, not stay in fork)
