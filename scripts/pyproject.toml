@@ -1,0 +1,11 @@
+[project]
+name = "letta-code-scripts"
+version = "0.1.0"
+description = "Fork management scripts for letta-code"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[tool.uv]
+dev-dependencies = []
